@@ -1,6 +1,7 @@
 const DEFAULTS = {
   fontFamily: 'Calibri',
-  fontSize: '11pt'
+  fontSize: '11pt',
+  decoration: 'none'
 }
 
 class Storage {
@@ -8,6 +9,9 @@ class Storage {
   constructor() { // Set Defaults
     this.getCustomFontFamily()
     .then(fontFamily => fontFamily ? null : this.setCustomFontFamily(DEFAULTS.fontFamily));
+
+    this.getCustomFontSize()
+    .then(fontSize => fontSize ? null : this.setCustomFontSize(DEFAULTS.fontSize));
 
     this.getCustomFontSize()
     .then(fontSize => fontSize ? null : this.setCustomFontSize(DEFAULTS.fontSize));
@@ -41,6 +45,13 @@ class Storage {
   }
   getCustomFontSize() {
     return this.get('FONT_SIZE');
+  }
+
+  setDecoration(decoration) {
+    this.set('DECORATION', decoration);
+  }
+  getDecoration() {
+    return this.get('DECORATION');
   }
 }
 

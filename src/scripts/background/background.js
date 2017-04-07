@@ -17,19 +17,30 @@ let isEmpty = (v) => v === 'none';
 
 let updateFormat = () => {
   storage.getCustomFontFamily()
-    .then(fontFamily => format.fontFamily = fontFamily);
+    .then(fontFamily => format.fontFamily = fontFamily || DEFAULTS.fontFamily);
   
   storage.getCustomFontSize()
-    .then(fontSize => format.fontSize = fontSize);
+    .then(fontSize => format.fontSize = fontSize || DEFAULTS.fontSize);
+
+  storage.getDecoration()
+    .then(fontSize => format.decoration = decoration || DEFAULTS.decoration);
 };
 
 let formatedHTML = ({ Url, Title, Id }) => {
   let fontFamilyParam = isEmpty(format.fontFamily) ? null : `font-family: ${format.fontFamily};`;
   let fontSizeParam = isEmpty(format.fontSize) ? null : `font-size: ${format.fontSize};`;
   let style = `style='${fontFamilyParam} ${fontSizeParam}'`;
-  return `<a ${style} href='${Url}'>${Id}</a>: <em ${style}>${Title}</em><br><p></p>`
+  let link = `<a ${style} href='${Url}'>${Id}</a>`;
+
+  switch (format.decoration) {
+    case 'italic + quotation marks': return `${link}<span ${style}>: "</span><em ${style}>${Title}</em><span ${style}>"</span>`;
+    case 'italic + thin space':      return `${link}<span ${style}>: </span><em ${style}>${Title}</em><span ${style}>&#8202;</span>`;
+    case 'italic + comma':           return `${link}<span ${style}>: </span><em ${style}>${Title}</em><span ${style}>,</span>`;
+    case 'italic + new line':        return `${link}<span ${style}>: </span><em ${style}>${Title}</em><p></p>`;
+    default:                         return `${link}<span ${style}>: ${Title}</span>`;
+  }
 };
-  
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   switch (message.type) {
     case 'copy-to-clipboard': {

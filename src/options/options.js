@@ -18,13 +18,20 @@ ready(() => {
 
     storage.getCustomFontSize()
         .then(fontSize => setValue('copy-custom-font-size', fontSize));
+
+    storage.getDecoration()
+        .then(decoration => setValue('copy-decoration', decoration));
 })
 
 document.getElementById('save')
     .addEventListener('click', () => {
-        storage.setCustomFontFamily(getValue('copy-custom-font-family'));
-        storage.setCustomFontSize(getValue('copy-custom-font-size'));
-        chrome.runtime.sendMessage({
-            type: 'options-changed'
-        }, close);
+        Promise.all(
+        storage.setCustomFontFamily(getValue('copy-custom-font-family')),
+        storage.setCustomFontSize(getValue('copy-custom-font-size')),
+        storage.setDecoration(getValue('copy-decoration')))
+        .then(() =>
+            chrome.runtime.sendMessage({
+                type: 'options-changed'
+            }, close)
+        );
     });

@@ -19,3 +19,6 @@ dist.zip
 
 # Keys to sign extension package
 key.pem*
+
+# Typings
+typings/
